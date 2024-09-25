@@ -18,7 +18,7 @@ export default function LoginForm() {
     event.preventDefault(); // Previne o comportamento padrão do formulário
 
     try {
-      const res = await fetch('http://localhost:3001/auth', {
+      const res = await fetch('https://back-apsplus-production.up.railway.app/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
