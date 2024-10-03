@@ -36,7 +36,6 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
     }
   };
 
-
   // Função para formatar o CPF
   const formatCPF = (value: string) => {
     const cleanedValue = value.replace(/\D/g, '');
@@ -107,7 +106,6 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
       [name]: formattedValue,
     });
   };
-  
 
   // Função para validar os campos do step 1
   const validateStep1 = () => {
@@ -137,68 +135,66 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
   };
 
   // Função para submeter o formulário
- // Função para submeter o formulário
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (validateStep2()) {
-    try {
-      // Enviar os dados para o backend
-      const response = await fetch('https://back-apsplus-production.up.railway.app/employees', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullName: formData.nome,
-          cpf: formData.cpf,
-          phone: formData.telefone,
-          email: formData.email,
-          cep: formData.cep,
-          address: formData.endereco,
-          number: formData.numero,
-          complement: formData.complemento,
-          neighborhood: formData.bairro,
-          city: formData.cidade,
-          state: formData.estado,
-        }),
-      });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateStep2()) {
+      try {
+        // Enviar os dados para o backend
+        const response = await fetch('https://back-apsplus-production.up.railway.app/employees', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullName: formData.nome,
+            cpf: formData.cpf,
+            phone: formData.telefone,
+            email: formData.email,
+            cep: formData.cep,
+            address: formData.endereco,
+            number: formData.numero,
+            complement: formData.complemento,
+            neighborhood: formData.bairro,
+            city: formData.cidade,
+            state: formData.estado,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Erro ao cadastrar o funcionário');
+        if (!response.ok) {
+          throw new Error('Erro ao cadastrar o funcionário');
+        }
+
+        // Se o cadastro for bem-sucedido
+        const data = await response.json();
+        console.log('Funcionário cadastrado com sucesso:', data);
+
+        // Opcional: Feedback visual
+        alert('Funcionário cadastrado com sucesso!');
+        
+        // Fecha o modal após o envio
+        onClose();
+
+        // Resetar os campos do formulário
+        setFormData({
+          nome: '',
+          cpf: '',
+          telefone: '',
+          email: '',
+          profissao: '',
+          cep: '',
+          endereco: '',
+          numero: '',
+          complemento: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+        });
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao cadastrar o funcionário.'); // Feedback visual de erro
       }
-
-      // Se o cadastro for bem-sucedido
-      const data = await response.json();
-      console.log('Funcionário cadastrado com sucesso:', data);
-
-      // Opcional: Feedback visual
-      alert('Funcionário cadastrado com sucesso!');
-      
-      // Fecha o modal após o envio
-      onClose();
-      
-      // Resetar os campos do formulário
-      setFormData({
-        nome: '',
-        cpf: '',
-        telefone: '',
-        email: '',
-        profissao: '',
-        cep: '',
-        endereco: '',
-        numero: '',
-        complemento: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-      });
-    } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro ao cadastrar funcionário. Tente novamente.');
     }
-  }
-};
-
+  };
 
   if (!isOpen) return null;
 
