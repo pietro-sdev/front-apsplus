@@ -1,13 +1,13 @@
-'use client'
+'use client';
 import "bootstrap-icons/font/bootstrap-icons.css"; // Certifique-se de importar o CSS dos ícones
-import { useState } from "react"; // Para gerenciar o estado aberto/fechado do sidebar
 import { useRouter, usePathname } from "next/navigation"; // Para redirecionamento e detecção da rota atual
-import { Logo } from "./logo";
+import { useSidebar } from "./sidebarcontext"; // Importar o hook para obter o estado do sidebar
+import { Logo } from "./logo"; // Supondo que o logo seja um componente importado
 
 export default function Sidebar() {
   const router = useRouter(); // Inicializa o hook useRouter
   const pathname = usePathname(); // Para obter a rota atual
-  const [isOpen, setIsOpen] = useState(true); // Estado para controlar se o sidebar está aberto ou fechado
+  const { isOpen, toggleSidebar } = useSidebar(); // Obter o estado e a função para alternar o sidebar
 
   const handleLogout = () => {
     // Remove o token JWT do localStorage
@@ -17,31 +17,26 @@ export default function Sidebar() {
     router.push("/login");
   };
 
-  const toggleSidebar = () => {
-    // Alterna o estado de visibilidade do sidebar
-    setIsOpen(!isOpen);
-  };
-
   const handleLinkClick = (path: string) => {
-    router.push(path); // Navega para a rota
+    router.push(path); // Redireciona para a página correspondente
   };
 
   return (
     <div
       className={`${
-        isOpen ? "w-72" : "w-20"
-      } flex flex-col h-screen bg-white border-r-[1.5px] border-[#C6C8CA] overflow-y-auto transition-all duration-300 ease-in-out`}>
-      
+        isOpen ? "w-64" : "w-20"
+      } flex flex-col h-screen bg-white border-r-[1.5px] border-[#C6C8CA] overflow-y-auto transition-all duration-300 ease-in-out`}
+    >
       {/* Botão de fechar/abrir o sidebar */}
-      <div className="flex justify-end p-2">
+      <div className={`flex ${isOpen ? "justify-end" : "justify-center"} p-4`}>
         <button onClick={toggleSidebar}>
-          <i className={`bi ${isOpen ? "bi-x-lg" : "bi-list"} text-[#A0AEC0] text-2xl`}></i>
+          <i className={`bi ${isOpen ? "bi-x-lg" : "bi-list"} text-gray-900 text-3xl`}></i>
         </button>
       </div>
 
       {/* Logotipo */}
-      <div className={`flex items-center justify-center h-20 mb-7 mt-5 ${isOpen ? "block" : "hidden"}`}>
-        <Logo size={160} />
+      <div className={`flex items-center justify-center h-20 mb-7 -mt-5 ${isOpen ? "block" : "hidden"}`}>
+        <Logo size={160} /> {/* Logotipo */}
       </div>
 
       {/* Menu principal */}
@@ -50,11 +45,11 @@ export default function Sidebar() {
 
             <a 
             onClick={() => handleLinkClick("/dashboard/agenda")}
-            className={`flex items-center space-x-4 cursor-pointer ${
+            className={`flex ${isOpen ? "items-center space-x-4" : "justify-center"} cursor-pointer ${
                 pathname === "/dashboard/agenda" ? "text-azulAps" : "text-gray-600"
             }`}>
             <i
-                className={`bi bi-calendar3 w-5 h-5 ${
+                className={`bi bi-calendar3 ${isOpen ? "w-5 h-5" : "text-2xl"} font-bold ${
                 pathname === "/dashboard/agenda" ? "text-azulAps" : "text-[#A0AEC0]"
                 }`}
             ></i>
@@ -63,11 +58,11 @@ export default function Sidebar() {
 
           <a 
             onClick={() => handleLinkClick("/dashboard/coordenacao")}
-            className={`flex items-center space-x-4 cursor-pointer ${
+            className={`flex ${isOpen ? "items-center space-x-4" : "justify-center"} cursor-pointer ${
               pathname === "/dashboard/coordenacao" ? "text-azulAps" : "text-gray-600"
             }`}>
             <i
-                className={`bi bi-bar-chart-line w-5 h-5 ${
+                className={`bi bi-bar-chart-line ${isOpen ? "w-5 h-5" : "text-2xl"} ${
                 pathname === "/dashboard/coordenacao" ? "text-azulAps":"text-[#A0AEC0]"
                 }`}
             ></i>
@@ -76,11 +71,11 @@ export default function Sidebar() {
 
           <a 
             onClick={() => handleLinkClick("/dashboard/pacientes")}
-            className={`flex items-center space-x-4 cursor-pointer ${
+            className={`flex ${isOpen ? "items-center space-x-4" : "justify-center"} cursor-pointer ${
               pathname === "/dashboard/pacientes" ? "text-azulAps" : "text-gray-600"
             }`}>
             <i
-                className={`bi bi-person-bounding-box w-5 h-5 ${
+                className={`bi bi-person-bounding-box ${isOpen ? "w-5 h-5" : "text-2xl"} ${
                 pathname === "/dashboard/pacientes" ? "text-azulAps":"text-[#A0AEC0]"
                 }`}
             ></i>
@@ -94,11 +89,11 @@ export default function Sidebar() {
 
           <a 
             onClick={() => handleLinkClick("/dashboard/admin")}
-            className={`flex items-center space-x-4 cursor-pointer ${
+            className={`flex ${isOpen ? "items-center space-x-4" : "justify-center"} cursor-pointer ${
               pathname === "/dashboard/admin" ? "text-azulAps" : "text-gray-600"
             }`}>
             <i
-                className={`bi bi-briefcase w-5 h-5 ${
+                className={`bi bi-briefcase ${isOpen ? "w-5 h-5" : "text-2xl"} ${
                 pathname === "/dashboard/admin" ? "text-azulAps":"text-[#A0AEC0]"
                 }`}
             ></i>
@@ -107,11 +102,11 @@ export default function Sidebar() {
 
           <a 
             onClick={() => handleLinkClick("/dashboard/gestao")}
-            className={`flex items-center space-x-4 cursor-pointer ${
+            className={`flex ${isOpen ? "items-center space-x-4" : "justify-center"} cursor-pointer ${
               pathname === "/dashboard/gestao" ? "text-azulAps" : "text-gray-600"
             }`}>
             <i
-                className={`bi bi-people w-5 h-5 ${
+                className={`bi bi-people ${isOpen ? "w-5 h-5" : "text-2xl"} ${
                 pathname === "/dashboard/gestao" ? "text-azulAps":"text-[#A0AEC0]"
                 }`}
             ></i>
@@ -123,8 +118,8 @@ export default function Sidebar() {
 
         {/* Conversas */}
         {isOpen && (
-          <div className="p-4">
-            <div className="flex gap-3 items-center mb-7">
+          <div className="p-3">
+            <div className="flex gap-2 items-center mb-7">
               <span className="text-gray-500 font-semibold text-sm">CONVERSAS</span>
               <span className="text-white font-medium bg-azulAps py-[0.5px] px-2 rounded-lg text-xs cursor-pointer">Novo Chat</span>
             </div>

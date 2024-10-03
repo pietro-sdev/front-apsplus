@@ -1,13 +1,11 @@
-import Sidebar from "@/components/ui/sidebar";
+// app/dashboard/page.tsx
+import SidebarWrapper from '@/components/ui/sidebarwrapper';
 
-export default function Page() {
-    return(
-        <div className="flex max-w-[1500px] h-screen bg-[#F7FAFC]">
-      <Sidebar />
-      <div className="flex-grow p-6">
-        {/* Adicione aqui o conteúdo da página */}
-        AGENDA
-      </div>
-    </div>
+export default function DashboardPage() {
+  return (
+    <SidebarWrapper>
+      <h1>AGENDA</h1>
+      {/* Conteúdo adicional da página */}
+    </SidebarWrapper>
   );
 }
