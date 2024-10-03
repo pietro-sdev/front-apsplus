@@ -3,6 +3,7 @@ import "bootstrap-icons/font/bootstrap-icons.css"; // Certifique-se de importar 
 import { useRouter, usePathname } from "next/navigation"; // Para redirecionamento e detecção da rota atual
 import { useSidebar } from "./sidebarcontext"; // Importar o hook para obter o estado do sidebar
 import { Logo } from "./logo"; // Supondo que o logo seja um componente importado
+import { useEffect } from "react"; // Adicionado useEffect para manipulação do localStorage
 
 export default function Sidebar() {
   const router = useRouter(); // Inicializa o hook useRouter
@@ -10,8 +11,11 @@ export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar(); // Obter o estado e a função para alternar o sidebar
 
   const handleLogout = () => {
-    // Remove o token JWT do localStorage
-    localStorage.removeItem("token");
+    // Verificar se estamos no lado do cliente
+    if (typeof window !== "undefined") {
+      // Remove o token JWT do localStorage
+      localStorage.removeItem("token");
+    }
 
     // Redireciona para a página de login
     router.push("/login");
@@ -20,6 +24,13 @@ export default function Sidebar() {
   const handleLinkClick = (path: string) => {
     router.push(path); // Redireciona para a página correspondente
   };
+
+  useEffect(() => {
+    // Verificar se estamos no lado do cliente antes de manipular localStorage
+    if (typeof window !== "undefined") {
+      // Pode-se adicionar manipulações do localStorage ou outras verificações aqui
+    }
+  }, []);
 
   return (
     <div

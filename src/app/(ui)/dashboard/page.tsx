@@ -8,19 +8,22 @@ export default function Page() {
   const [loading, setLoading] = useState(true); // Estado para controle de loading
 
   useEffect(() => {
-    // Verificar se o token JWT está no localStorage
-    const token = localStorage.getItem("token");
+    // Verificar se estamos no lado do cliente antes de acessar localStorage
+    if (typeof window !== "undefined") {
+      // Verificar se o token JWT está no localStorage
+      const token = localStorage.getItem("token");
 
-    // Simular uma pequena demora para dar tempo de verificar o token (opcional)
-    setTimeout(() => {
-      // Se o token não estiver presente, redirecionar para a página de login
-      if (!token) {
-        router.push("/login");
-      } else {
-        // Se o token estiver presente, remover o estado de loading
-        setLoading(false);
-      }
-    }, 1000); // Tempo opcional de simulação de loading
+      // Simular uma pequena demora para dar tempo de verificar o token (opcional)
+      setTimeout(() => {
+        // Se o token não estiver presente, redirecionar para a página de login
+        if (!token) {
+          router.push("/login");
+        } else {
+          // Se o token estiver presente, remover o estado de loading
+          setLoading(false);
+        }
+      }, 1000); // Tempo opcional de simulação de loading
+    }
   }, [router]);
 
   // Mostrar uma tela de loading enquanto verifica o token
