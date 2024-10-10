@@ -145,7 +145,7 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
     if (validateStep2()) {
       try {
         // Envia os dados para o backend
-        const response = await fetch('http://localhost:3001/employees', {
+        const response = await fetch('https://back-apsplus-production.up.railway.app/employees', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
