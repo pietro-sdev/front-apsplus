@@ -73,7 +73,7 @@ export default function TabelaFuncionario() {
   // Função para excluir o funcionário
   const excluirFuncionario = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3001/employees/${id}`, {
+      const response = await fetch(`https://back-apsplus-production.up.railway.app/employees/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
