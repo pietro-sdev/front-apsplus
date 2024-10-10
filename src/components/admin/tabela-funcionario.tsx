@@ -44,7 +44,7 @@ export default function TabelaFuncionario() {
   // Função para buscar os funcionários cadastrados do backend
   const fetchFuncionarios = async () => {
     try {
-      const response = await fetch('http://localhost:3001/employees');
+      const response = await fetch('https://back-apsplus-production.up.railway.app/employees');
       if (response.ok) {
         const data = await response.json();
         const funcionariosComCodigo = data.map((funcionario: any, index: number) => ({
