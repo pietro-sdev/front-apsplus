@@ -1,13 +1,35 @@
-import Sidebar from "@/components/ui/sidebar";
+import Navbar from '@/components/ui/navbar';
+import Sidebar from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebarcontext';
+import TabelaPacientes from '@/components/patients/tabela-paciente';
 
 export default function Page() {
-    return(
-        <div className="flex max-w-[1500px] h-screen bg-[#F7FAFC]">
-      <Sidebar />
-      <div className="flex-grow p-6">
-        {/* Adicione aqui o conteúdo da página */}
-        PACIENTES
+  return (
+    <SidebarProvider>
+      <div className="flex max-w-[1500px] h-screen bg-[#F7FAFC]">
+        <Sidebar /> {/* Sidebar controlado pelo contexto */}
+        <div className="flex-grow">
+          <Navbar
+            h1="Pacientes"
+            buttons={[
+              {
+                type: 'download',
+                label: 'Download',
+                iconClass: 'bi bi-pencil-square', // Ícone de download
+              },
+              {
+                type: 'addPaciente',
+                label: 'Adicionar Pacientes',
+                iconClass: 'bi bi-plus-lg', // Ícone de adicionar funcionário
+              },
+            ]}
+            downloadOptions={['patients']} 
+          />
+          <div className="mt-5">
+            <TabelaPacientes />
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }

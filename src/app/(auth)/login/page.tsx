@@ -1,5 +1,4 @@
 import LoginForm from "@/components/auth/login-form";
-import InputWithIcon from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
 import "bootstrap-icons/font/bootstrap-icons.css"; // Certifique-se de importar o CSS dos ícones
 

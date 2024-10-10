@@ -93,7 +93,6 @@ export default function Sidebar() {
             {isOpen && (
               <>
                 <span>Pacientes</span>
-                <span className="ml-auto text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">6</span>
               </>
             )}
           </a>

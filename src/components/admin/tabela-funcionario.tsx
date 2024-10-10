@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from "react"; // Importa useEffect para buscar dados quando o componente carrega
-import { useSidebar } from "@/components/ui/sidebarcontext"; // Importa o contexto do Sidebar
-import TabelaClinica from "@/components/admin/tabela-clinica"; // Importa a tabela de Clínicas
+import { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useSidebar } from "@/components/ui/sidebarcontext";
+import TabelaClinica from "@/components/admin/tabela-clinica";
 
 interface Funcionario {
-  id: number; // Adicione o ID para referenciar no backend
+  id: number;
   nome: string;
   codigo: string;
   profissao: string;
@@ -21,39 +23,38 @@ interface Funcionario {
 
 // Função para formatar o telefone
 const formatTelefone = (telefone: string) => {
-  const cleanedValue = telefone.replace(/\D/g, ''); // Remove qualquer caractere não numérico
+  const cleanedValue = telefone.replace(/\D/g, '');
 
   if (cleanedValue.length <= 10) {
     return `+55 (${cleanedValue.slice(0, 2)}) ${cleanedValue.slice(2, 6)}-${cleanedValue.slice(6)}`;
   } else {
-    return `+55 (${cleanedValue.slice(0, 2)}) ${cleanedValue.slice(2, 7)}-${cleanedValue.slice(7)}`; // Formato para celular com 9 dígitos
+    return `+55 (${cleanedValue.slice(0, 2)}) ${cleanedValue.slice(2, 7)}-${cleanedValue.slice(7)}`;
   }
 };
 
 export default function TabelaFuncionario() {
-  const [mostrarClinicas, setMostrarClinicas] = useState(false); // Estado para alternar entre as tabelas
-  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]); // Estado para armazenar funcionários dinâmicos
-  const [menuAberto, setMenuAberto] = useState<{ [key: number]: boolean }>({}); // Estado para controlar o menu de opções
-  const [modalAberto, setModalAberto] = useState(false); // Estado para controlar a visibilidade do modal
-  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<Funcionario | null>(null); // Armazena o funcionário selecionado para exibição
-  const { isOpen } = useSidebar(); // Acessa o estado do sidebar pelo contexto
-  const tableWidth = isOpen ? "w-[1000px]" : "w-[1138px]"; // Ajuste da largura com base no estado do sidebar
+  const [mostrarClinicas, setMostrarClinicas] = useState(false);
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+  const [menuAberto, setMenuAberto] = useState<{ [key: number]: boolean }>({});
+  const [modalAberto, setModalAberto] = useState(false);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState<Funcionario | null>(null);
+  const { isOpen } = useSidebar();
+  const tableWidth = isOpen ? "w-[1000px]" : "w-[1138px]";
 
   // Função para buscar os funcionários cadastrados do backend
   const fetchFuncionarios = async () => {
     try {
-      const response = await fetch('https://back-apsplus-production.up.railway.app/employees'); // Ajuste a URL conforme sua rota do backend
+      const response = await fetch('http://localhost:3001/employees');
       if (response.ok) {
         const data = await response.json();
-        // Adiciona o código dinâmico e cor para cada funcionário
         const funcionariosComCodigo = data.map((funcionario: any, index: number) => ({
           id: funcionario.id,
           nome: funcionario.fullName,
-          codigo: `#FC${(index + 1).toString().padStart(3, '0')}`, // Gera o código no formato FC001, FC002...
-          profissao: "Médico", // Setando a profissão como Médico
-          status: "Ativo", // Setando status como Ativo por padrão
+          codigo: `#FC${(index + 1).toString().padStart(3, '0')}`,
+          profissao: "Médico",
+          status: "Ativo",
           telefone: funcionario.phone,
-          avatarColor: "bg-gray-300", // Cor padrão do avatar
+          avatarColor: "bg-gray-300",
           cep: funcionario.cep,
           endereco: funcionario.address,
           cidade: funcionario.city,
@@ -72,19 +73,31 @@ export default function TabelaFuncionario() {
   // Função para excluir o funcionário
   const excluirFuncionario = async (id: number) => {
     try {
-      const response = await fetch(`https://back-apsplus-production.up.railway.app/employees/${id}`, {
+      const response = await fetch(`http://localhost:3001/employees/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
-        // Remove o funcionário do estado
         setFuncionarios((prev) => prev.filter((funcionario) => funcionario.id !== id));
-        alert('Funcionário excluído com sucesso');
+        // Exibe o toast de sucesso
+        toast.success("Funcionário excluído com sucesso.", {
+          icon: false,
+          style: {
+            background: '#22C55E',
+            color: '#FFF',
+            borderRadius: '5px',
+            padding: '5px 10px',
+            fontWeight: 'bold',
+            fontSize: '15px',
+            marginTop: '10px',
+          }
+        });
       } else {
-        alert('Erro ao excluir o funcionário');
+        // Exibe o toast de erro
+        toast.error("Erro ao excluir o funcionário.");
       }
     } catch (error) {
       console.error("Erro ao excluir funcionário:", error);
-      alert('Erro ao excluir o funcionário');
+      toast.error("Erro ao excluir o funcionário.");
     }
   };
 
@@ -93,12 +106,10 @@ export default function TabelaFuncionario() {
     fetchFuncionarios();
   }, []);
 
-  // Função para alternar entre tabelas
   const handleMostrarClinicas = () => {
     setMostrarClinicas(true);
   };
 
-  // Função para abrir/fechar o menu de opções de um funcionário
   const toggleMenu = (index: number) => {
     setMenuAberto((prevState) => ({
       ...prevState,
@@ -106,36 +117,45 @@ export default function TabelaFuncionario() {
     }));
   };
 
-  // Função para abrir o modal e exibir os dados do funcionário selecionado
   const exibirFuncionario = (funcionario: Funcionario) => {
     setFuncionarioSelecionado(funcionario);
     setModalAberto(true);
   };
 
-  // Função para fechar o modal
   const fecharModal = () => {
     setModalAberto(false);
     setFuncionarioSelecionado(null);
   };
 
-  // Renderiza a tabela de clínicas se o estado for verdadeiro
   if (mostrarClinicas) {
     return <TabelaClinica />;
   }
 
   return (
     <div className={`rounded-xl ${tableWidth} h-[300px] bg-white ml-5 overflow-y-auto shadow`}>
+      <ToastContainer /> {/* Toast container para exibir os toasts */}
       <div className="py-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold mb-4 ml-3">
             Funcionários - Total de {funcionarios.length} funcionários cadastrados.
           </h2>
-          <button
-            onClick={handleMostrarClinicas} // Alterna para a tabela de clínicas ao clicar
-            className="font-semibold mb-4 mr-10 text-xs text-black border-[1.5px] border-[#C6C8CA] px-3 py-1 rounded-lg"
-          >
-            Visualizar Clínicas
-          </button>
+          <div className="flex space-x-4 mb-3 mr-3">
+            {/* Botão de Recarregar */}
+            <button
+              onClick={fetchFuncionarios} // Chama a função para recarregar os dados
+              className="flex items-center font-semibold justify-center border-[1.5px] border-[#C6C8CA] bg-white text-black text-xs px-3 py-1 rounded-lg hover:bg-gray-300 transition"
+            >
+              <i className="bi bi-arrow-clockwise mr-2"></i> {/* Ícone de recarregar do Bootstrap Icons */}
+              Recarregar
+            </button>
+            {/* Botão de Mostrar Clínicas */}
+            <button
+              onClick={handleMostrarClinicas}
+              className="font-semibold text-xs text-black border-[1.5px] border-[#C6C8CA] px-3 py-1 rounded-lg"
+            >
+              Visualizar Clínicas
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -168,7 +188,7 @@ export default function TabelaFuncionario() {
                       {funcionario.status}
                     </span>
                   </td>
-                  <td className="p-3">{formatTelefone(funcionario.telefone)}</td> {/* Aplica a formatação ao telefone */}
+                  <td className="p-3">{formatTelefone(funcionario.telefone)}</td>
                   <td className="p-3 relative">
                     <button
                       className="bg-white font-semibold text-xs text-black border-[1.5px] border-[#C6C8CA] px-3 py-1 rounded-lg"
@@ -177,13 +197,12 @@ export default function TabelaFuncionario() {
                       Ver Mais
                     </button>
 
-                    {/* Caixinha com opções */}
                     {menuAberto[index] && (
                       <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <ul>
                           <li
                             className="px-4 py-2 text-sm text-red-500 hover:bg-red-100 cursor-pointer"
-                            onClick={() => excluirFuncionario(funcionario.id)} // Chama a função de exclusão
+                            onClick={() => excluirFuncionario(funcionario.id)}
                           >
                             Excluir
                           </li>
@@ -195,7 +214,7 @@ export default function TabelaFuncionario() {
                           </li>
                           <li
                             className="px-4 py-2 text-sm text-blue-500 hover:bg-blue-100 cursor-pointer"
-                            onClick={() => exibirFuncionario(funcionario)} // Abre o modal para exibir o funcionário
+                            onClick={() => exibirFuncionario(funcionario)}
                           >
                             Exibir
                           </li>
@@ -214,7 +233,6 @@ export default function TabelaFuncionario() {
         </div>
       </div>
 
-      {/* Modal para exibir os detalhes do funcionário */}
       {modalAberto && funcionarioSelecionado && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto bg-black bg-opacity-50">
           <div className="bg-white w-full max-w-[70%] md:max-w-[700px] p-6 rounded-lg shadow-lg">

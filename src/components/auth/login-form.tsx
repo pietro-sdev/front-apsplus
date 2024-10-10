@@ -45,7 +45,7 @@ export default function LoginForm() {
 
       // Simula um redirecionamento após o toast
       setTimeout(() => {
-        router.push("/dashboard"); // Redireciona para a página dashboard
+        router.push("/dashboard/agenda"); // Redireciona para a página dashboard
       }, 2000);
 
     } catch (error: any) {
